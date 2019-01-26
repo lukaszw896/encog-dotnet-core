@@ -53,6 +53,12 @@ namespace Encog.MathUtil.Randomize
             _min = min;
         }
 
+        public RangeRandomizer(double min, double max, int seed) :base(seed)
+        {
+            _max = max;
+            _min = min;
+        }
+
 
         /// <value>the min</value>
         public double Min

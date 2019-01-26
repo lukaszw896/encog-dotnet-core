@@ -48,6 +48,14 @@ namespace Encog.MathUtil.Randomize
         {
             _random = new Random((int) (DateTime.Now.Ticks*100));
         }
+        /// <summary>
+        /// Constructor for BasicRandomizer actualy using seed
+        /// </summary>
+        /// <param name="seed"></param>
+        protected BasicRandomizer(int seed)
+        {
+            _random = new Random(seed);
+        }
 
 
         /// <value>the random to set</value>

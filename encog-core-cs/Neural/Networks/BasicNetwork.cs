@@ -162,6 +162,8 @@ namespace Encog.Neural.Networks
             }
         }
 
+        public int Seed { get; private set; }
+
         /// <value>Get the structure of the neural network. The structure allows you
         /// to quickly obtain synapses and layers without traversing the
         /// network.</value>
@@ -182,7 +184,7 @@ namespace Encog.Neural.Networks
                 // finalized, set the layers
                 if (_structure.Flat == null)
                 {
-                    foreach (ILayer layer  in  _structure.Layers)
+                    foreach (ILayer layer in _structure.Layers)
                     {
                         if (layer.HasBias())
                         {
@@ -307,9 +309,9 @@ namespace Encog.Neural.Networks
         {
             try
             {
-				var output = new double[_structure.Flat.OutputCount];
+                var output = new double[_structure.Flat.OutputCount];
                 _structure.Flat.Compute(input, output);
-				return new BasicMLData(output, false);
+                return new BasicMLData(output, false);
             }
             catch (IndexOutOfRangeException ex)
             {
@@ -374,11 +376,25 @@ namespace Encog.Neural.Networks
 
                 if (useNwr)
                 {
-                    return new NguyenWidrowRandomizer();
+                    if (Seed != 0)
+                    {
+                        return new NguyenWidrowRandomizer(Seed);
+                    }
+                    else
+                    {
+                        return new NguyenWidrowRandomizer();
+                    }
                 }
                 else
                 {
-                    return new RangeRandomizer(-1, 1);
+                    if (Seed != 0)
+                    {
+                        return new RangeRandomizer(-1, 1, Seed);
+                    }
+                    else
+                    {
+                        return new RangeRandomizer(-1, 1);
+                    }
                 }
             }
         }
@@ -409,6 +425,7 @@ namespace Encog.Neural.Networks
         ///
         public void Reset(int seed)
         {
+            this.Seed = seed;
             Reset();
         }
 
@@ -451,7 +468,7 @@ namespace Encog.Neural.Networks
         {
             int result = 0;
 
-            foreach (ILayer layer  in  _structure.Layers)
+            foreach (ILayer layer in _structure.Layers)
             {
                 result += layer.NeuronCount;
             }
@@ -466,7 +483,7 @@ namespace Encog.Neural.Networks
         /// <returns>A cloned copy of the neural network.</returns>
         public Object Clone()
         {
-            var result = (BasicNetwork) ObjectCloner.DeepCopy(this);
+            var result = (BasicNetwork)ObjectCloner.DeepCopy(this);
             return result;
         }
 
@@ -480,7 +497,7 @@ namespace Encog.Neural.Networks
         {
             var input2 = new BasicMLData(input);
             IMLData output2 = Compute(input2);
-			output2.CopyTo(output, 0, output2.Count);
+            output2.CopyTo(output, 0, output2.Count);
         }
 
 
@@ -670,7 +687,7 @@ namespace Encog.Neural.Networks
             int weightBaseIndex = _structure.Flat.WeightIndex[toLayerNumber];
             int count = _structure.Flat.LayerCounts[fromLayerNumber];
             int weightIndex = weightBaseIndex + fromNeuron
-                              + (toNeuron*count);
+                              + (toNeuron * count);
 
             return _structure.Flat.Weights[weightIndex];
         }
@@ -766,7 +783,7 @@ namespace Encog.Neural.Networks
             int weightBaseIndex = _structure.Flat.WeightIndex[toLayerNumber];
             int count = _structure.Flat.LayerCounts[fromLayerNumber];
             int weightIndex = weightBaseIndex + fromNeuron
-                              + (toNeuron*count);
+                              + (toNeuron * count);
 
             _structure.Flat.Weights[weightIndex] = v;
         }
@@ -779,9 +796,9 @@ namespace Encog.Neural.Networks
         {
             var builder = new StringBuilder();
             builder.Append("[BasicNetwork: Layers=");
-            
-            int layers = _structure.Flat==null ? _structure.Layers.Count : _structure.Flat.LayerCounts.Length;
-            
+
+            int layers = _structure.Flat == null ? _structure.Layers.Count : _structure.Flat.LayerCounts.Length;
+
             builder.Append(layers);
             builder.Append("]");
             return builder.ToString();

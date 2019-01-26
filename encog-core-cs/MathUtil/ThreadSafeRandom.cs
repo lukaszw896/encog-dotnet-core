@@ -29,10 +29,29 @@ namespace Encog.MathUtil
     /// </summary>
     public class ThreadSafeRandom
     {
+        private static int Seed { get; set; }
         /// <summary>
         /// A non-thread-safe random number generator that uses a time-based seed.
         /// </summary>
-        private static readonly Random Random = new Random();
+        private static Random Random = new Random();
+
+        private static readonly object tLock = new object();
+
+        /// <summary>
+        /// Used for setting seed
+        /// </summary>
+        /// <param name="seed"></param>
+        public static void SetSeed(int seed)
+        {
+            lock (tLock)
+            {
+                if(Seed == 0)
+                {
+                    Seed = seed;
+                    Random = new Random(seed);
+                }
+            }
+        }
 
         /// <summary>
         /// Generate a random number between 0 and 1.
@@ -40,7 +59,7 @@ namespace Encog.MathUtil
         /// <returns></returns>
         public static double NextDouble()
         {
-            lock (Random)
+            lock (tLock)
             {
                 return Random.NextDouble();
             }

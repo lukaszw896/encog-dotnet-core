@@ -37,6 +37,21 @@ namespace Encog.MathUtil.Randomize
     public class NguyenWidrowRandomizer : IRandomizer
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public NguyenWidrowRandomizer()
+        {
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="seed"></param>
+        public NguyenWidrowRandomizer(int seed)
+        {
+            ThreadSafeRandom.SetSeed(seed);
+        }
+        /// <summary>
         /// Message to indicate which operations are not allowed.
         /// </summary>
         public static String MSG = "This type of randomization is not supported by Nguyen-Widrow";
@@ -47,6 +62,7 @@ namespace Encog.MathUtil.Randomize
         /// <param name="method">The network to randomize.</param>
         public void Randomize(IMLMethod method)
         {
+
             if (!(method is BasicNetwork))
             {
                 throw new EncogError("Nguyen-Widrow only supports BasicNetwork.");
@@ -59,6 +75,16 @@ namespace Encog.MathUtil.Randomize
                 RandomizeSynapse(network, fromLayer);
             }
 
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="seed"></param>
+        public void Randomize(IMLMethod method, int seed)
+        {
+
+            this.Randomize(method);
         }
 
         /// <summary>
@@ -135,5 +161,6 @@ namespace Encog.MathUtil.Randomize
         {
             throw new EncogError(MSG);
         }
+
     }
 }
