@@ -58,6 +58,9 @@ namespace Encog.MathUtil.Randomize
             _max = max;
             _min = min;
         }
+        public RangeRandomizer( int seed) : base(seed)
+        {
+        }
 
 
         /// <value>the min</value>
@@ -96,7 +99,17 @@ namespace Encog.MathUtil.Randomize
             double range = max - min;
             return (range*ThreadSafeRandom.NextDouble()) + min;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public double NonStaticRandomize(double min, double max)
+        {
+            double range = max - min;
+            return (range * _random.NextDouble()) + min;
+        }
         /// <summary>
         /// Generate a random number in the specified range.
         /// </summary>

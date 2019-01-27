@@ -37,8 +37,8 @@ namespace Encog.MathUtil.Randomize
         /// The random number generator.
         /// </summary>
         ///
-        private Random _random;
-
+        public Random _random;
+        protected readonly ThreadSafeRandom threadSafeRandom;
         /// <summary>
         /// Construct a random number generator with a random(current time) seed. If
         /// you want to set your own seed, just call "getRandom().setSeed".
@@ -46,6 +46,7 @@ namespace Encog.MathUtil.Randomize
         ///
         protected BasicRandomizer()
         {
+            threadSafeRandom = new ThreadSafeRandom();
             _random = new Random((int) (DateTime.Now.Ticks*100));
         }
         /// <summary>
@@ -54,6 +55,7 @@ namespace Encog.MathUtil.Randomize
         /// <param name="seed"></param>
         protected BasicRandomizer(int seed)
         {
+            threadSafeRandom = new ThreadSafeRandom();
             _random = new Random(seed);
         }
 

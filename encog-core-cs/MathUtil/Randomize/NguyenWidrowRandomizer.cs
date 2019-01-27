@@ -36,6 +36,7 @@ namespace Encog.MathUtil.Randomize
     ///
     public class NguyenWidrowRandomizer : IRandomizer
     {
+        private RangeRandomizer rangeRandomizer;
         /// <summary>
         /// 
         /// </summary>
@@ -49,6 +50,7 @@ namespace Encog.MathUtil.Randomize
         /// <param name="seed"></param>
         public NguyenWidrowRandomizer(int seed)
         {
+            this.rangeRandomizer = new RangeRandomizer(seed);
             ThreadSafeRandom.SetSeed(seed);
         }
         /// <summary>
@@ -121,12 +123,39 @@ namespace Encog.MathUtil.Randomize
             {
                 if (fromCount != fromCountTotalCount)
                 {
-                    double w = RangeRandomizer.Randomize(-b, b);
+                    double w = rangeRandomizer.NonStaticRandomize(-b, b);
                     network.SetWeight(fromLayer, fromCount, toNeuron, w);
                 }
                 for (int fromNeuron = 0; fromNeuron < fromCount; fromNeuron++)
                 {
-                    double w = RangeRandomizer.Randomize(0, b);
+                    double w = rangeRandomizer.NonStaticRandomize(0, b);
+                    network.SetWeight(fromLayer, fromNeuron, toNeuron, w);
+                }
+            }
+        }
+
+        private void RandomizeSynapse(BasicNetwork network, int fromLayer, Random rnd)
+        {
+            int toLayer = fromLayer + 1;
+            int toCount = network.GetLayerNeuronCount(toLayer);
+            int fromCount = network.GetLayerNeuronCount(fromLayer);
+            int fromCountTotalCount = network.GetLayerTotalNeuronCount(fromLayer);
+            IActivationFunction af = network.GetActivation(toLayer);
+            double low = CalculateRange(af, Double.NegativeInfinity);
+            double high = CalculateRange(af, Double.PositiveInfinity);
+
+            double b = 0.7d * Math.Pow(toCount, (1d / fromCount)) / (high - low);
+
+            for (int toNeuron = 0; toNeuron < toCount; toNeuron++)
+            {
+                if (fromCount != fromCountTotalCount)
+                {
+                    double w = rangeRandomizer.NonStaticRandomize(-b, b);
+                    network.SetWeight(fromLayer, fromCount, toNeuron, w);
+                }
+                for (int fromNeuron = 0; fromNeuron < fromCount; fromNeuron++)
+                {
+                    double w = rangeRandomizer.NonStaticRandomize(0, b);
                     network.SetWeight(fromLayer, fromNeuron, toNeuron, w);
                 }
             }
